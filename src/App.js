@@ -3,30 +3,41 @@ import { useState } from "react/cjs/react.development";
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [coins, setCoins] = useState([]);
-  // 한번만 실행하기 위해 두번째 인자를 빈 배열로
+  const [movies, setMovies] = useState([]); //movie 객체들을 저장할 배열
+  // async & await 공부필요. fetch 할때 뒤에 .then 붙이는 방법 대신 사용
+  const getMovies = async () => {
+    const response = await fetch(
+      `https://yts.mx/api/v2/list_movies.json?minimum_rating=9&sort_by=year`
+    );
+    const json = await response.json();
+    setMovies(json.data.movies);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    fetch("https://api.coinpaprika.com/v1/tickers") //코인 받아올 url
-      .then((response) => response.json())
-      .then((json) => {
-        setCoins(json);
-        setLoading(false);
-      });
+    getMovies();
   }, []);
+  console.log(movies);
 
   return (
     <div>
-      <h1>The Coins! {loading ? "" : `(${coins.length})`}</h1>
       {loading ? (
-        <strong>Loading...</strong>
+        <h1>Loading...</h1>
       ) : (
-        <select>
-          {coins.map((coin) => (
-            <option key={coin.id}>
-              {coin.name} ({coin.symbol}): {coin.quotes.USD.price} USD
-            </option>
+        <div>
+          {movies.map((movie) => (
+            <div key={movie.id}>
+              <img src={movie.medium_cover_image} />
+              <h2>{movie.title}</h2>
+              <p>{movie.summary}</p>
+              <ul>
+                {movie.genres.map((g) => (
+                  <li key={g}>{g}</li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </select>
+        </div>
       )}
     </div>
   );
