@@ -10,7 +10,8 @@ function Movie({ id, coverImg, title, summary, genres }) {
         <Link to={`/movie/${id}`}>{title}</Link>
         {/* <a> 태그의 href 대신 리액트는 Link 를 사용. 페이지 전체를 새로고침하면서 이동하지 않고, 더 가볍게 이동*/}
       </h2>
-      <p>{summary}</p>
+      <p>{summary.length > 235 ? `${summary.slice(0, 235)}...` : summary}</p>{" "}
+      {/* 글의 길이가 235가 넘으면 235까지만 표시하기 */}
       <ul>
         {genres.map((g) => (
           <li key={g}>{g}</li>
